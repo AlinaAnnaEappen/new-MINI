@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SHE SHIELD - Advisory</title>
+
+<style>
+
+/* ===== BODY WITH BACKGROUND IMAGE ===== */
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    color:white;
+
+    background:
+        linear-gradient(rgba(20,10,35,0.75), rgba(40,20,60,0.75)),
+        url('hero.png') no-repeat center center fixed;
+
+    background-size:cover;
+}
+
+/* Soft golden glow */
+body::before{
+    content:"";
+    position:absolute;
+    width:600px;
+    height:600px;
+    background: radial-gradient(circle, rgba(212,175,55,0.15), transparent 70%);
+    top:-200px;
+    right:-200px;
+    z-index:0;
+}
+
+/* ===== NAVBAR ===== */
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 60px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(15px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.4);
+    position:relative;
+    z-index:2;
+}
+
+nav h2{
+    margin:0;
+    letter-spacing:3px;
+    font-weight:500;
+
+    background: linear-gradient(90deg,#ffffff,#d4af37,#ffffff);
+    background-size:200%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation: shimmer 4s infinite linear;
+}
+
+nav ul{
+    list-style:none;
+    display:flex;
+    gap:25px;
+    margin:0;
+    padding:0;
+}
+
+nav ul li a{
+    text-decoration:none;
+    color:#ddd;
+    font-weight:500;
+    transition:0.3s;
+}
+
+nav ul li a:hover{
+    color:#d4af37;
+}
+
+/* ===== HERO SECTION ===== */
+.hero{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:80vh;
+    text-align:center;
+    flex-direction:column;
+    position:relative;
+    z-index:2;
+}
+
+.hero h1{
+    font-size:55px;
+    font-weight:300;
+    margin-bottom:15px;
+    text-shadow:0 0 25px rgba(212,175,55,0.6);
+}
+
+.hero p{
+    font-size:20px;
+    max-width:600px;
+    margin-bottom:30px;
+    color:#ccc;
+}
+
+/* ===== BUTTON ===== */
+.hero a button{
+    padding:15px 35px;
+    font-size:16px;
+    border-radius:40px;
+    border:1px solid #d4af37;
+    background:transparent;
+    color:#d4af37;
+    cursor:pointer;
+    transition:0.4s;
+}
+
+.hero a button:hover{
+    background:#d4af37;
+    color:#1c1028;
+    box-shadow:0 0 20px #d4af37;
+    transform:translateY(-4px);
+}
+
+/* ===== FOOTER ===== */
+footer{
+    text-align:center;
+    padding:15px;
+    background:rgba(0,0,0,0.4);
+    color:#aaa;
+    box-shadow:0 -5px 20px rgba(0,0,0,0.4);
+}
+
+/* ===== SHIMMER ANIMATION ===== */
+@keyframes shimmer{
+    0%{background-position:-200%}
+    100%{background-position:200%}
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>SHE SHIELD</h2>
+    <ul>
+        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\frontent.html  new.html">Home</a></li>
+        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\advisory new.html">Advisory</a></li>
+        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\aboutus new.html">About</a></li>
+        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\contact new.html">Contact</a></li>
+        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\feedback new.html">Feedback</a></li>
+    </ul>
+</nav>
+
+<div class="hero">
+    <h1>Safety Advisory</h1>
+    <p>
+        Strong together. Safe together. Empowering women with smart travel protection.
+    </p>
+
+    <a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\advisory new.html">
+        <button>Search Now</button>
+    </a>
+</div>
+
+<footer>
+© 2026 SHE SHIELD | Women Travel Comfort Index & Advisory System
+</footer>
+
+</body>
+</html>

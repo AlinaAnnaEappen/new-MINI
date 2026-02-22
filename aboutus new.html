@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SHE SHIELD - About Us</title>
+
+<style>
+
+/* ===== BODY BACKGROUND ===== */
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    color:white;
+
+    background:
+        linear-gradient(rgba(20,10,35,0.75), rgba(40,20,60,0.75)),
+        url("logo.png") no-repeat center center fixed;
+
+    background-size:cover;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+/* Soft golden glow background effect */
+body::before{
+    content:"";
+    position:absolute;
+    width:600px;
+    height:600px;
+    background: radial-gradient(circle, rgba(212,175,55,0.15), transparent 70%);
+    bottom:-200px;
+    left:-200px;
+    z-index:0;
+}
+
+/* ===== GLASS CONTAINER ===== */
+.container{
+    width:450px;
+    padding:40px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    box-shadow:0 15px 40px rgba(0,0,0,0.6);
+    border:1px solid rgba(212,175,55,0.3);
+    position:relative;
+    z-index:2;
+}
+
+/* ===== HEADING ===== */
+h1{
+    text-align:center;
+    margin-bottom:25px;
+    font-size:26px;
+    letter-spacing:1px;
+
+    background: linear-gradient(90deg,#ffffff,#d4af37,#ffffff);
+    background-size:200%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation: shimmer 4s infinite linear;
+}
+
+/* ===== PARAGRAPH STYLE ===== */
+p{
+    line-height:1.8;
+    font-size:15px;
+    color:#ddd;
+    text-align:justify;
+    margin-bottom:15px;
+}
+
+/* ===== SHIMMER ANIMATION ===== */
+@keyframes shimmer{
+    0%{background-position:-200%}
+    100%{background-position:200%}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>About SHE SHIELD</h1>
+
+    <p>
+        SHE SHIELD – Women Travel Comfort Index & Advisory System is designed to empower women by providing intelligent safety probability insights based on location, date, and time.
+    </p>
+
+    <p>
+        Our mission is to create a safer travel ecosystem where women can move confidently, make informed decisions, and experience freedom without fear.
+    </p>
+
+    <p>
+        Through data-driven analysis and smart advisory recommendations, SHE SHIELD stands as a symbol of strength, protection, and empowerment.
+    </p>
+
+</div>
+
+</body>
+</html>

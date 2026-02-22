@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SHE SHIELD - Contact</title>
+
+<style>
+
+/* ===== BODY BACKGROUND ===== */
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    color:white;
+
+    background:
+        linear-gradient(rgba(20,10,35,0.75), rgba(40,20,60,0.75)),
+        url("hero.png") no-repeat center center fixed;
+
+    background-size:cover;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+/* Soft Golden Glow */
+body::before{
+    content:"";
+    position:absolute;
+    width:500px;
+    height:500px;
+    background: radial-gradient(circle, rgba(212,175,55,0.15), transparent 70%);
+    top:-150px;
+    right:-150px;
+    z-index:0;
+}
+
+/* ===== GLASS CONTAINER ===== */
+.container{
+    width:450px;
+    padding:40px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    box-shadow:0 15px 40px rgba(0,0,0,0.6);
+    border:1px solid rgba(212,175,55,0.3);
+    position:relative;
+    z-index:2;
+}
+
+/* ===== HEADING ===== */
+h1{
+    text-align:center;
+    margin-bottom:25px;
+    font-size:26px;
+    letter-spacing:1px;
+
+    background: linear-gradient(90deg,#ffffff,#d4af37,#ffffff);
+    background-size:200%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation: shimmer 4s infinite linear;
+}
+
+/* ===== FORM LABEL ===== */
+label{
+    display:block;
+    margin-top:18px;
+    font-weight:600;
+    font-size:14px;
+}
+
+/* ===== INPUT FIELDS ===== */
+input, textarea{
+    width:100%;
+    padding:10px;
+    margin-top:6px;
+    border-radius:10px;
+    border:1px solid rgba(212,175,55,0.5);
+    background:rgba(255,255,255,0.1);
+    color:white;
+    outline:none;
+    transition:0.3s;
+}
+
+/* Input Glow Effect */
+input:focus, textarea:focus{
+    border-color:#d4af37;
+    box-shadow:0 0 10px rgba(212,175,55,0.5);
+}
+
+/* ===== BUTTON ===== */
+button{
+    width:100%;
+    margin-top:25px;
+    padding:12px;
+    border:none;
+    border-radius:30px;
+    font-weight:bold;
+    font-size:15px;
+    cursor:pointer;
+
+    background:linear-gradient(45deg,#d4af37,#b7950b);
+    color:white;
+    transition:0.4s;
+    box-shadow:0 8px 20px rgba(212,175,55,0.4);
+}
+
+/* Button Hover */
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 12px 30px rgba(212,175,55,0.6);
+}
+
+/* ===== SHIMMER ANIMATION ===== */
+@keyframes shimmer{
+    0%{background-position:-200%}
+    100%{background-position:200%}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Contact SHE SHIELD</h1>
+
+    <form>
+        <label>Name</label>
+        <input type="text" placeholder="Enter your name">
+
+        <label>Email</label>
+        <input type="email" placeholder="Enter your email">
+
+        <label>Message</label>
+        <textarea rows="4" placeholder="Write your message"></textarea>
+
+        <button type="submit">Send Message</button>
+    </form>
+
+</div>
+
+</body>
+</html>

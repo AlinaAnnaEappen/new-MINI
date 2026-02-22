@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SHE SHIELD - Women Travel Comfort Index</title>
+
+<style>
+
+/* ===== BODY WITH ELEGANT BACKGROUND ===== */
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    color:white;
+
+    background:
+        linear-gradient(rgba(20,10,35,0.75), rgba(40,20,60,0.75)),
+        url("hero.png") no-repeat center center fixed;
+
+    background-size:cover;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+/* Soft Gold Glow Effect */
+body::before{
+    content:"";
+    position:absolute;
+    width:600px;
+    height:600px;
+    background: radial-gradient(circle, rgba(212,175,55,0.15), transparent 70%);
+    top:-200px;
+    right:-200px;
+    z-index:0;
+}
+
+/* ===== GLASS CONTAINER ===== */
+.container{
+    width:420px;
+    padding:35px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    box-shadow:0 15px 40px rgba(0,0,0,0.6);
+    border:1px solid rgba(212,175,55,0.3);
+    position:relative;
+    z-index:2;
+}
+
+/* ===== HEADING ===== */
+h1{
+    text-align:center;
+    font-size:22px;
+    margin-bottom:25px;
+    letter-spacing:1px;
+
+    background: linear-gradient(90deg,#ffffff,#d4af37,#ffffff);
+    background-size:200%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation: shimmer 4s infinite linear;
+}
+
+/* ===== LABELS ===== */
+label{
+    font-weight:500;
+    display:block;
+    margin-top:15px;
+    color:#ddd;
+}
+
+/* ===== INPUT FIELDS ===== */
+input{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    border-radius:10px;
+    border:1px solid rgba(212,175,55,0.5);
+    background:rgba(255,255,255,0.1);
+    color:white;
+    outline:none;
+}
+
+input:focus{
+    border-color:#d4af37;
+    box-shadow:0 0 10px rgba(212,175,55,0.6);
+}
+
+/* ===== BUTTON ===== */
+button{
+    width:100%;
+    margin-top:25px;
+    padding:12px;
+    border-radius:30px;
+    border:1px solid #d4af37;
+    background:transparent;
+    color:#d4af37;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.4s;
+}
+
+button:hover{
+    background:#d4af37;
+    color:#1c1028;
+    box-shadow:0 0 20px #d4af37;
+    transform:translateY(-3px);
+}
+
+/* ===== RESULT ===== */
+.result{
+    margin-top:20px;
+    text-align:center;
+    font-weight:500;
+    font-size:18px;
+    color:#d4af37;
+}
+
+/* ===== SHIMMER ANIMATION ===== */
+@keyframes shimmer{
+    0%{background-position:-200%}
+    100%{background-position:200%}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>SHE SHIELD - Women Travel Comfort Index</h1>
+
+    <form>
+        <label>Enter Place</label>
+        <input type="text" placeholder="Enter city or location">
+
+        <label>Select Date</label>
+        <input type="date">
+
+        <label>Select Time</label>
+        <input type="time">
+
+        <button type="button">Calculate Safety Probability</button>
+    </form>
+
+    <div class="result">
+        Safety Probability: -- %
+    </div>
+
+</div>
+
+</body>
+</html>
