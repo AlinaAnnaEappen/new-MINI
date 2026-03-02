@@ -47,7 +47,7 @@ def extract_features(place, hour):
 
     print("Coordinates:", lat, lon)
 
-    # -------- 1KM FEATURES (INCLUDING HOSPITAL) --------
+    # -------- 1KM FEATURES --------
     tags_local = {
         "highway": ["street_lamp", "bus_stop"],
         "shop": True,
@@ -73,21 +73,50 @@ def extract_features(place, hour):
         gdf_local[gdf_local.get("amenity").isin(["police", "hospital", "fire_station"])]
     )
 
-    # Hospital distance (within 1km)
+    # -------- HOSPITAL (within 1km) --------
     hospital_distance = 9999
+    nearest_hospital = {
+        "name": "Not Found",
+        "phone": "Not Available",
+        "lat": None,
+        "lon": None
+    }
+
     hospital_places = gdf_local[gdf_local.get("amenity") == "hospital"]
 
     if not hospital_places.empty:
-        hospital_distance = min(
-            haversine(lat, lon,
-                      row.geometry.centroid.y,
-                      row.geometry.centroid.x)
-            for _, row in hospital_places.iterrows()
+        nearest_row = min(
+            hospital_places.iterrows(),
+            key=lambda x: haversine(
+                lat, lon,
+                x[1].geometry.centroid.y,
+                x[1].geometry.centroid.x
+            )
+        )[1]
+
+        hospital_distance = haversine(
+            lat, lon,
+            nearest_row.geometry.centroid.y,
+            nearest_row.geometry.centroid.x
         )
+
         hospital_distance = round(hospital_distance, 2)
 
-    # -------- POLICE 5KM --------
+        nearest_hospital = {
+            "name": nearest_row.get("name", "Unknown"),
+            "phone": nearest_row.get("phone", "Not Available"),
+            "lat": nearest_row.geometry.centroid.y,
+            "lon": nearest_row.geometry.centroid.x
+        }
+
+    # -------- POLICE (within 5km) --------
     police_distance = 9999
+    nearest_police = {
+        "name": "Not Found",
+        "phone": "Not Available",
+        "lat": None,
+        "lon": None
+    }
 
     try:
         police_gdf = ox.features_from_point(
@@ -97,17 +126,34 @@ def extract_features(place, hour):
         )
 
         if not police_gdf.empty:
-            police_distance = min(
-                haversine(lat, lon,
-                          row.geometry.centroid.y,
-                          row.geometry.centroid.x)
-                for _, row in police_gdf.iterrows()
+            nearest_row = min(
+                police_gdf.iterrows(),
+                key=lambda x: haversine(
+                    lat, lon,
+                    x[1].geometry.centroid.y,
+                    x[1].geometry.centroid.x
+                )
+            )[1]
+
+            police_distance = haversine(
+                lat, lon,
+                nearest_row.geometry.centroid.y,
+                nearest_row.geometry.centroid.x
             )
+
             police_distance = round(police_distance, 2)
+
+            nearest_police = {
+                "name": nearest_row.get("name", "Unknown"),
+                "phone": nearest_row.get("phone", "Not Available"),
+                "lat": nearest_row.geometry.centroid.y,
+                "lon": nearest_row.geometry.centroid.x
+            }
 
     except:
         pass
 
+    # -------- MODEL FEATURES --------
     data = {
         "street_light": street_light,
         "bus_stops": bus_stops,
@@ -120,4 +166,4 @@ def extract_features(place, hour):
         "travel_hour": hour
     }
 
-    return pd.DataFrame([data])
+    return pd.DataFrame([data]), lat, lon, nearest_hospital, nearest_police
