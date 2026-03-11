@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHE SHIELD - Map</title>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    background:linear-gradient(135deg,#130b24,#2c1a47);
+    color:#f6f1df;
+}
+
+nav{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 40px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(15px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.4);
+    z-index:10;
+}
+
+nav h2{
+    margin:0;
+    letter-spacing:2px;
+    font-weight:500;
+    background: linear-gradient(90deg,#ffffff,#d4af37,#ffffff);
+    background-size:200%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation: shimmer 4s infinite linear;
+}
+
+nav ul{
+    list-style:none;
+    display:flex;
+    gap:20px;
+    margin:0;
+    padding:0;
+}
+
+nav ul li a{
+    text-decoration:none;
+    color:#ddd;
+    font-weight:500;
+    transition:0.3s;
+}
+
+nav ul li a:hover{
+    color:#d4af37;
+}
+
+.page{
+    max-width:960px;
+    margin:0 auto;
+    padding:110px 20px 20px;
+}
+
+.card{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(212,175,55,0.35);
+    border-radius:18px;
+    box-shadow:0 12px 34px rgba(0,0,0,0.45);
+    backdrop-filter:blur(12px);
+    overflow:hidden;
+}
+
+.header{
+    padding:16px 18px;
+    border-bottom:1px solid rgba(255,255,255,0.14);
+}
+
+.header h1{
+    margin:0;
+    font-size:22px;
+    color:#f3d46c;
+}
+
+.meta{
+    margin-top:6px;
+    font-size:14px;
+    color:#e8dfc2;
+}
+
+#map{
+    width:100%;
+    height:560px;
+    background:#111;
+}
+
+.actions{
+    padding:14px 18px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:1px solid #d4af37;
+    color:#d4af37;
+    background:transparent;
+    border-radius:999px;
+    padding:9px 16px;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.btn:hover{
+    background:#d4af37;
+    color:#221433;
+}
+
+.error{
+    padding:24px 18px;
+    color:#ffb7b7;
+}
+
+@keyframes shimmer{
+    0%{background-position:-200%}
+    100%{background-position:200%}
+}
+
+@media (max-width: 768px){
+    nav{
+        flex-direction:column;
+        gap:10px;
+        padding:14px 16px;
+    }
+
+    nav ul{
+        gap:14px;
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .page{
+        padding-top:145px;
+    }
+}
+</style>
+</head>
+
+<body>
+<nav>
+    <h2>SHE SHIELD</h2>
+    <ul>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('advisory') }}">Advisory</a></li>
+        <li><a href="{{ url_for('aboutus') }}">About</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        <li><a href="{{ url_for('feedback') }}">Feedback</a></li>
+    </ul>
+</nav>
+<div class="page">
+    <div class="card">
+        <div class="header">
+            <h1 id="title">Map View</h1>
+            <div class="meta" id="meta"></div>
+        </div>
+        <div id="map"></div>
+        <div class="actions">
+            <a class="btn" href="/">Back To Home</a>
+        </div>
+        <div class="error" id="error" style="display:none;"></div>
+    </div>
+</div>
+
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const name = params.get("name") || "Selected Location";
+const type = params.get("type") || "Location";
+const distanceKm = params.get("distance_km") || "--";
+
+const lat = parseFloat(params.get("lat"));
+const lon = parseFloat(params.get("lon"));
+const userLat = parseFloat(params.get("user_lat"));
+const userLon = parseFloat(params.get("user_lon"));
+
+const title = document.getElementById("title");
+const meta = document.getElementById("meta");
+const errorBox = document.getElementById("error");
+const mapEl = document.getElementById("map");
+
+if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    mapEl.style.display = "none";
+    errorBox.style.display = "block";
+    errorBox.innerText = "Map coordinates are missing for this location.";
+} else {
+    title.innerText = `${type}: ${name}`;
+    meta.innerText = `Distance: ${distanceKm} km | Coordinates: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+
+    const map = L.map("map").setView([lat, lon], 15);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    const facilityMarker = L.marker([lat, lon]).addTo(map);
+    facilityMarker.bindPopup(`<b>${type}</b><br>${name}<br>${distanceKm} km`).openPopup();
+
+    if (Number.isFinite(userLat) && Number.isFinite(userLon)) {
+        const userMarker = L.marker([userLat, userLon]).addTo(map);
+        userMarker.bindPopup("Searched Place");
+
+        const line = L.polyline(
+            [[userLat, userLon], [lat, lon]],
+            { color: "#f0c54b", weight: 3, opacity: 0.85 }
+        ).addTo(map);
+
+        map.fitBounds(line.getBounds(), { padding: [35, 35] });
+    }
+}
+</script>
+</body>
+</html>
