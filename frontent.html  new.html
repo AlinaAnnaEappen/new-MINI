@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -14,7 +14,7 @@ body{
 
     background:
         linear-gradient(rgba(20,10,35,0.75), rgba(40,20,60,0.75)),
-        url('hero.png') no-repeat center center fixed;
+        url('{{ url_for("static", filename="hero.png") }}') no-repeat center center fixed;
 
     background-size:cover;
 }
@@ -143,11 +143,11 @@ footer{
 <nav>
     <h2>SHE SHIELD</h2>
     <ul>
-        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\frontent.html  new.html">Home</a></li>
-        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\advisory new.html">Advisory</a></li>
-        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\aboutus new.html">About</a></li>
-        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\contact new.html">Contact</a></li>
-        <li><a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\feedback new.html">Feedback</a></li>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('advisory') }}">Advisory</a></li>
+        <li><a href="{{ url_for('aboutus') }}">About</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        <li><a href="{{ url_for('feedback') }}">Feedback</a></li>
     </ul>
 </nav>
 
@@ -157,7 +157,7 @@ footer{
         Strong together. Safe together. Empowering women with smart travel protection.
     </p>
 
-    <a href="C:\Users\hpnew\OneDrive\文档\athira\miniproject\advisory new.html">
+    <a href="{{ url_for('advisory') }}">
         <button>Search Now</button>
     </a>
 </div>
