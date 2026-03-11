@@ -14,14 +14,81 @@ body{
 
     background:
         linear-gradient(rgba(20,10,35,0.75), rgba(40,20,60,0.75)),
-        url("hero.png") no-repeat center center fixed;
+        url("{{ url_for('static', filename='hero.png') }}") no-repeat center center fixed;
 
     background-size:cover;
 
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
+    min-height:100vh;
+    padding:110px 20px 20px;
+    box-sizing:border-box;
+}
+
+/* ===== NAVBAR ===== */
+nav{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 40px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(15px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.4);
+    z-index:4;
+}
+
+nav h2{
+    margin:0;
+    letter-spacing:2px;
+    font-weight:500;
+    background: linear-gradient(90deg,#ffffff,#d4af37,#ffffff);
+    background-size:200%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation: shimmer 4s infinite linear;
+}
+
+nav ul{
+    list-style:none;
+    display:flex;
+    gap:20px;
+    margin:0;
+    padding:0;
+}
+
+nav ul li a{
+    text-decoration:none;
+    color:#ddd;
+    font-weight:500;
+    transition:0.3s;
+}
+
+nav ul li a:hover,
+nav ul li a.active{
+    color:#d4af37;
+}
+
+@media (max-width: 768px){
+    nav{
+        flex-direction:column;
+        gap:10px;
+        padding:14px 16px;
+    }
+
+    nav ul{
+        gap:14px;
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    body{
+        padding-top:145px;
+    }
 }
 
 /* Soft Gold Glow Effect */
@@ -38,7 +105,8 @@ body::before{
 
 /* ===== GLASS CONTAINER ===== */
 .container{
-    width:420px;
+    width:520px;
+    max-width:92vw;
     padding:35px;
     border-radius:20px;
     background:rgba(255,255,255,0.08);
@@ -109,13 +177,72 @@ button:hover{
     transform:translateY(-3px);
 }
 
+button:disabled{
+    opacity:0.65;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:none;
+}
+
 /* ===== RESULT ===== */
 .result{
     margin-top:20px;
-    text-align:center;
+    text-align:left;
     font-weight:500;
+    font-size:15px;
+    color:#e8dfc2;
+    border:1px solid rgba(212,175,55,0.25);
+    border-radius:12px;
+    padding:14px;
+    background:rgba(0,0,0,0.25);
+}
+
+.summary{
     font-size:18px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.risk-safe{
+    color:#7dffa2;
+}
+
+.risk-cautious{
+    color:#ffd36e;
+}
+
+.risk-unsafe{
+    color:#ff8b8b;
+}
+
+.facility-title{
+    margin-top:8px;
+    margin-bottom:6px;
+    font-weight:700;
     color:#d4af37;
+}
+
+.facility-item{
+    margin-bottom:5px;
+    color:#f2f2f2;
+    font-size:14px;
+}
+
+.facility-link{
+    color:#9ad7ff;
+    text-decoration:none;
+    border-bottom:1px dashed rgba(154,215,255,0.55);
+}
+
+.facility-link:hover{
+    color:#d7f0ff;
+    border-bottom-color:rgba(215,240,255,0.85);
+}
+
+.risk-note{
+    margin-top:8px;
+    color:#ffb3b3;
+    font-size:13px;
 }
 
 /* ===== SHIMMER ANIMATION ===== */
@@ -129,28 +256,179 @@ button:hover{
 
 <body>
 
+<nav>
+    <h2>SHE SHIELD</h2>
+    <ul>
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('advisory') }}" class="active">Advisory</a></li>
+        <li><a href="{{ url_for('aboutus') }}">About</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        <li><a href="{{ url_for('feedback') }}">Feedback</a></li>
+    </ul>
+</nav>
+
 <div class="container">
 
     <h1>SHE SHIELD - Women Travel Comfort Index</h1>
 
-    <form>
+    <!-- ✅ ONLY FORM PART UPDATED -->
+    <form id="predictForm">
         <label>Enter Place</label>
-        <input type="text" placeholder="Enter city or location">
+        <input id="place" name="place" type="text" placeholder="Enter city or location" required>
 
         <label>Select Date</label>
-        <input type="date">
+        <input id="date" name="date" type="date" required>
 
         <label>Select Time</label>
-        <input type="time">
+        <input id="time" name="time" type="time" required>
 
-        <button type="button">Calculate Safety Probability</button>
+        <button type="submit">Calculate Safety Probability</button>
     </form>
 
-    <div class="result">
+    <div class="result" id="resultBox">
         Safety Probability: -- %
     </div>
 
 </div>
+
+<script>
+const form = document.getElementById("predictForm");
+const resultBox = document.getElementById("resultBox");
+const dateInput = document.getElementById("date");
+const timeInput = document.getElementById("time");
+const submitBtn = form.querySelector('button[type="submit"]');
+
+resultBox.addEventListener("click", (event) => {
+    const link = event.target.closest("a.facility-link");
+    if (!link) return;
+    event.preventDefault();
+    window.location.replace(link.href);
+});
+
+const today = new Date();
+const yyyy = today.getFullYear();
+const mm = String(today.getMonth() + 1).padStart(2, "0");
+const dd = String(today.getDate()).padStart(2, "0");
+const minDate = `${yyyy}-${mm}-${dd}`;
+dateInput.min = minDate;
+
+function currentTimeHHMM() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mi = String(now.getMinutes()).padStart(2, "0");
+    return `${hh}:${mi}`;
+}
+
+function updateTimeMinForSelectedDate() {
+    const selectedDate = dateInput.value;
+    if (!selectedDate) {
+        timeInput.min = "";
+        return;
+    }
+
+    if (selectedDate === minDate) {
+        const minTime = currentTimeHHMM();
+        timeInput.min = minTime;
+
+        if (timeInput.value && timeInput.value < minTime) {
+            timeInput.value = "";
+        }
+    } else {
+        timeInput.min = "";
+    }
+}
+
+dateInput.addEventListener("change", updateTimeMinForSelectedDate);
+dateInput.addEventListener("input", updateTimeMinForSelectedDate);
+updateTimeMinForSelectedDate();
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const place = document.getElementById("place").value.trim();
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
+
+    if (!place || !date || !time) {
+        resultBox.innerText = "Safety Probability: Please fill all fields.";
+        return;
+    }
+
+    if (date < minDate) {
+        resultBox.innerText = `Safety Probability: Past date is not allowed. Use ${minDate} or a future date.`;
+        return;
+    }
+
+    updateTimeMinForSelectedDate();
+    if (date === minDate) {
+        const minAllowedTime = timeInput.min || currentTimeHHMM();
+        if (time < minAllowedTime) {
+            resultBox.innerText = `Safety Probability: For today, select a time from ${minAllowedTime} onward.`;
+            return;
+        }
+    }
+
+    try {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Calculating...";
+        resultBox.innerText = "Safety Probability: Calculating from live map data...";
+
+        const res = await fetch("/predict", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ place, date, time })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            resultBox.innerText = "Safety Probability: " + (data.error || "Error");
+            return;
+        }
+
+        // ✅ Show label + percentage
+        const facilities = data.nearest_facilities || {};
+        const police = facilities.police_station;
+        const hospital = facilities.hospital;
+        const busStop = facilities.bus_stop;
+        const hotel = facilities.hotel;
+
+        const labelClass = data.label === "UNSAFE"
+            ? "risk-unsafe"
+            : (data.label === "CAUTIOUS" ? "risk-cautious" : "risk-safe");
+
+        const formatFacility = (title, item) => {
+            if (!item) {
+                return `<div class="facility-item"><strong>${title}:</strong> Not found nearby</div>`;
+            }
+            const name = (item.name && item.name !== "Unknown") ? item.name : `${title} Nearby`;
+            const mapUrl = `/map?type=${encodeURIComponent(title)}&name=${encodeURIComponent(name)}&lat=${encodeURIComponent(item.lat)}&lon=${encodeURIComponent(item.lon)}&distance_km=${encodeURIComponent(item.distance_km)}&user_lat=${encodeURIComponent(data.coordinates.lat)}&user_lon=${encodeURIComponent(data.coordinates.lon)}`;
+            return `<div class="facility-item"><strong>${title}:</strong> <a class="facility-link" href="${mapUrl}">${name}</a> (${item.distance_km} km)</div>`;
+        };
+
+        const riskNote = data.forced_unsafe
+            ? `<div class="risk-note">Marked UNSAFE due to high-risk travel conditions.</div>`
+            : "";
+
+        resultBox.innerHTML = `
+            <div class="summary ${labelClass}">Safety Probability: ${data.probability}% (${data.label})</div>
+            <div class="facility-title">Nearest Facilities</div>
+            ${formatFacility("Police Station", police)}
+            ${formatFacility("Hospital", hospital)}
+            ${formatFacility("Bus Stop", busStop)}
+            ${formatFacility("Hotel", hotel)}
+            ${riskNote}
+        `;
+
+    } catch (err) {
+        resultBox.innerText = "Safety Probability: Server error";
+        console.error(err);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Calculate Safety Probability";
+    }
+});
+</script>
 
 </body>
 </html>
