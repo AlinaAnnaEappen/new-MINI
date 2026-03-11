@@ -1,60 +1,78 @@
+import pickle
+
 import pandas as pd
-import joblib
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.preprocessing import StandardScaler
 
-# -----------------------------
-# Step 1: Load dataset
-# -----------------------------
-data = pd.read_csv(r"C:\Users\alina\OneDrive\Desktop\MINI\safety_dataset.csv")  # adjust path
+DATASET_PATH = "women_travel_safety_dataset_updated.csv"
+MODEL_PATH = "gradient_boosting_model.pkl"
+SCALER_PATH = "scaler.pkl"
+FEATURES_PATH = "feature_columns.pkl"
+TARGET_COLUMN = "safety_score"
+FEATURE_COLUMNS = [
+    "street_light",
+    "bus_stops",
+    "shops",
+    "poi",
+    "parking_slots",
+    "police_distance",
+    "hospital_distance",
+    "emergency_count",
+    "travel_hour",
+]
 
-# -----------------------------
-# Step 2: Prepare features and binary target
-# -----------------------------
-X = data.drop("safety_score", axis=1)  # all features
-y_binary = (data["safety_score"] >= 50).astype(int)  # 1 = SAFE, 0 = UNSAFE
 
-# -----------------------------
-# Step 3: Split data
-# -----------------------------
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y_binary, test_size=0.2, random_state=42
-)
+def main():
+    data = pd.read_csv(DATASET_PATH)
 
-# -----------------------------
-# Step 4: Train Logistic Regression
-# -----------------------------
-lr_model = LogisticRegression(max_iter=1000)
-lr_model.fit(X_train, y_train)
-lr_pred_prob = lr_model.predict_proba(X_test)[:, 1]
-lr_pred_label = lr_model.predict(X_test)
+    if "id" in data.columns:
+        data = data.drop(columns=["id"])
 
-print("----- Logistic Regression -----")
-print("Accuracy:", round(accuracy_score(y_test, lr_pred_label), 3))
-print("ROC AUC:", round(roc_auc_score(y_test, lr_pred_prob), 3))
-print()
+    required_columns = FEATURE_COLUMNS + [TARGET_COLUMN]
+    missing_columns = [c for c in required_columns if c not in data.columns]
+    if missing_columns:
+        raise ValueError(f"Dataset is missing required columns: {missing_columns}")
 
-# -----------------------------
-# Step 5: Train Gradient Boosting Classifier
-# -----------------------------
-gb_model = GradientBoostingClassifier(
-    n_estimators=200,
-    learning_rate=0.05,
-    max_depth=4,
-    random_state=42
-)
-gb_model.fit(X_train, y_train)
-gb_pred_prob = gb_model.predict_proba(X_test)[:, 1]
-gb_pred_label = gb_model.predict(X_test)
+    clean_data = data[required_columns].dropna().copy()
+    if clean_data.empty:
+        raise ValueError("Dataset has no valid rows after dropping missing values.")
 
-print("----- Gradient Boosting Classifier -----")
-print("Accuracy:", round(accuracy_score(y_test, gb_pred_label), 3))
-print("ROC AUC:", round(roc_auc_score(y_test, gb_pred_prob), 3))
+    x = clean_data[FEATURE_COLUMNS]
+    y = clean_data[TARGET_COLUMN]
 
-# -----------------------------
-# Step 6: Save the trained Gradient Boosting Classifier
-# -----------------------------
-joblib.dump(gb_model, "safety_model.pkl")
-print("Gradient Boosting Classifier saved as safety_model.pkl")
+    x_train, x_test, y_train, y_test = train_test_split(
+        x, y, test_size=0.2, random_state=42
+    )
+
+    scaler = StandardScaler()
+    x_train_scaled = scaler.fit_transform(x_train)
+    x_test_scaled = scaler.transform(x_test)
+
+    model = GradientBoostingRegressor(random_state=42)
+    model.fit(x_train_scaled, y_train)
+
+    predictions = model.predict(x_test_scaled)
+    mae = mean_absolute_error(y_test, predictions)
+    r2 = r2_score(y_test, predictions)
+
+    with open(MODEL_PATH, "wb") as f:
+        pickle.dump(model, f)
+    with open(SCALER_PATH, "wb") as f:
+        pickle.dump(scaler, f)
+    with open(FEATURES_PATH, "wb") as f:
+        pickle.dump(FEATURE_COLUMNS, f)
+
+    print("Model trained successfully")
+    print("Rows used:", len(clean_data))
+    print("Features:", FEATURE_COLUMNS)
+    print("MAE:", round(mae, 3))
+    print("R2:", round(r2, 3))
+    print(
+        f"Saved: {MODEL_PATH}, {SCALER_PATH}, {FEATURES_PATH}"
+    )
+
+
+if __name__ == "__main__":
+    main()
